@@ -102,24 +102,21 @@ public class BraintreePaymentPlugin implements MethodCallHandler, ActivityResult
                     String paymentNonce = result.getPaymentMethodNonce().getNonce();
                     if (paymentNonce == null && paymentNonce.isEmpty()) {
                         map.put("status", "fail");
-                        map.put("message", "Payment Nonce is Empty.");
-                        activeResult.success(map);
+                        map.put("message", "Payment nonce is empty.");
                     } else {
                         map.put("status", "success");
-                        map.put("message", "Payment Nouce is ready.");
+                        map.put("message", "Payment nonce is ready.");
                         map.put("paymentNonce", paymentNonce);
-                        activeResult.success(map);
                     }
                 } else if (resultCode == Activity.RESULT_CANCELED) {
                     map.put("status", "fail");
-                    map.put("message", "User canceled the Payment");
-                    activeResult.success(map);
+                    map.put("message", "User canceled the payment");
                 } else {
                     Exception error = (Exception) data.getSerializableExtra(DropInActivity.EXTRA_ERROR);
                     map.put("status", "fail");
                     map.put("message", error.getMessage());
-                    activeResult.success(map);
                 }
+                activeResult.success(map);
                 return true;
             default:
                 return false;
