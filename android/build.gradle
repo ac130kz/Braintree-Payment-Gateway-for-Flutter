@@ -8,7 +8,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.4.2'
+        classpath 'com.android.tools.build:gradle:3.5.1'
 
     }
 }
@@ -35,6 +35,8 @@ android {
 }
 
 dependencies {
-    implementation 'com.braintreepayments.api:drop-in:4.4.1'
-    implementation 'com.google.android.gms:play-services-wallet:17.0.0'
+    implementation 'com.braintreepayments.api:drop-in:4.4.1' {
+        transitive = false
+    }
+    implementation 'com.google.android.gms:play-services-wallet:18.0.0'
 }
