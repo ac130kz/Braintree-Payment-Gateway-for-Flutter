@@ -3,12 +3,16 @@
 #import "BraintreeDropIn.h"
 @import PassKit;
 #import "BraintreeApplePay.h"
+#import "BraintreePayPal.h"
+#import "PayPalFlowViewController.h"
 
 NSString *clientToken;
 NSString *amount;
+NSString *currency;
+BTAPIClient *braintreeClient;
 FlutterResult _flutterResult;
 
-@interface BraintreePaymentPlugin ()
+@interface BraintreePaymentPlugin () <PayPalFlowDelegate>
 @property (nonatomic, strong) UIViewController *viewController;
 @end
 
@@ -38,15 +42,39 @@ FlutterResult _flutterResult;
         _flutterResult = result;
         clientToken = call.arguments[@"clientToken"];
         amount =call.arguments[@"amount"];
+        nameRequired = call.arguments[@"nameRequired"];
         [self showDropIn:clientToken withResult:result];
-    } else {
+    } else if ([@"startPayPalFlow" isEqualToString:call.method]) {
+        _flutterResult = result;
+        clientToken = call.arguments[@"clientToken"];
+        amount =call.arguments[@"amount"];
+        currency = call.arguments[@"currency"];
+        [self showPayPalFlow:clientToken];
+    }
+    else {
         result(FlutterMethodNotImplemented);
     }
 }
 
+- (void)showPayPalFlow:(NSString *)clientTokenOrTokenizationKey {
+    // Create view controller for the PayPal payment process
+    // todo - figure out how to make this transparent or show a hud while loading
+    PayPalFlowViewController *payPalController = [[PayPalFlowViewController alloc] init];
+    payPalController.clientToken = clientToken;
+    payPalController.amount = amount;
+    payPalController.currency = currency;
+    payPalController.delegate = self;
+    
+    [_viewController presentViewController: payPalController animated:YES completion:nil];
+    //[self.viewController showViewController:payPalController sender:self];
+    
+}
+
 - (void)showDropIn:(NSString *)clientTokenOrTokenizationKey withResult:(FlutterResult)flutterResult {
     BTDropInRequest *request = [[BTDropInRequest alloc] init];
-    
+    if(nameRequired)
+        request.cardholderNameSetting = BTFormFieldRequired;
+
    BTDropInController *dropInController = [[BTDropInController alloc] initWithAuthorization:clientTokenOrTokenizationKey request:request handler:^(BTDropInController * _Nonnull controller, BTDropInResult * _Nullable result, NSError * _Nullable error) {
         
         if (error != nil) {
@@ -148,6 +176,10 @@ FlutterResult _flutterResult;
 
 - (void)paymentAuthorizationViewControllerDidFinish:(PKPaymentAuthorizationViewController *)controller {
     [self.viewController dismissViewControllerAnimated:YES completion:nil];
+}
+
+- (void)resultDataFromPayPalFlow:(NSMutableDictionary *)data {
+    _flutterResult(data);
 }
 
 @end

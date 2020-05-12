@@ -27,8 +27,15 @@ class _PayState extends State<Pay> {
   payNow() async {
     BraintreePayment braintreePayment = new BraintreePayment();
     var data = await braintreePayment.showDropIn(
-        nonce: clientNonce, amount: "2.0", enableGooglePay: true);
+        nonce: clientNonce, amount: "2.0", enableGooglePay: true, nameRequired:true);
     print("Response of the payment $data");
+  }
+
+  payPalFlow() async {
+    BraintreePayment braintreePayment = new BraintreePayment();
+    Map data = await braintreePayment.startPayPalFlow(
+        nonce: clientNonce, amount: "5.0", currency: "USD");
+    print("Response of the paypal flow $data");
   }
 
   @override
@@ -38,13 +45,24 @@ class _PayState extends State<Pay> {
         title: Text("Pay Now"),
       ),
       body: Center(
-        child: FlatButton(
-          onPressed: payNow,
-          color: Colors.teal,
-          child: Text(
-            "Pay Now",
-            style: TextStyle(color: Colors.white),
-          ),
+        child: Column(
+          children: <Widget>[
+            FlatButton(
+              onPressed: payNow,
+              color: Colors.teal,
+              child: Text(
+                "Pay Now (Drop In)",
+                style: TextStyle(color: Colors.white),
+              ),
+            ),FlatButton(
+              onPressed: payPalFlow,
+              color: Colors.teal,
+              child: Text(
+                "Pay with paypal",
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ],
         ),
       ),
     );

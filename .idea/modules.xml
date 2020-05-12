@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/braintree_payment.iml" filepath="$PROJECT_DIR$/.idea/braintree_payment.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/Braintree-Payment-Gateway-for-Flutter.iml" filepath="$PROJECT_DIR$/.idea/Braintree-Payment-Gateway-for-Flutter.iml" />
     </modules>
   </component>
 </project>
